@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script
+      type="text/javascript"
+      src="http://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"
+    ></script>
+    <title>Home Page</title>
+    <style>
+      .d-none {
+        display: none;
+      }
+    </style>
+  </head>
+  <body onload="getStation()">
+    <h1>Question 2</h1>
+    <h2>Program Form</h2>
+    <div>
+      <label for="programNames">Choose a Station:</label>
+      <select name="programNames" id="progSelect">
+        <option selected value="select">Select</option>
+        <option value="1">WABC-TV</option>
+        <option value="2">WHIJ-TV</option>
+        <option value="3">AAAA-TV</option>
+        <option value="4">KKKK-TV</option>
+      </select>
+    </div>
+    <div class="output"></div>
+
+    <button id="but" onclick="getStation()">Update</button>
+    <div class="form-container">
+      <form id="program-form" class="d-none">
+        <label for="flightDate">Flight Date:</label><br />
+        <input type="text" id="flightDate" name="flightDate" /><br />
+        <label for="programName">Program Name:</label><br />
+        <input type="text" id="programName" name="programName" />
+      </form>
+    </div>
+    <script id="logout-template" type="text/template"></script>
+
+    <script>
+
+
+      var PROGRAM = [
+        {
+          programId: 1,
+          stationId: 1,
+          programName: "10 O'CLOCK NWS",
+          flightDate: "3/11/1990",
+        },
+        {
+          programId: 2,
+          stationId: 1,
+          programName: "ACCESS HOLLYWD",
+          flightDate: "8/25/1991",
+        },
+        {
+          programId: 3,
+          stationId: 4,
+          programName: "Jeop",
+          flightDate: "6/30/1975",
+        },
+        {
+          programId: 4,
+          stationId: 3,
+          programName: "C O' BRIEN-NBC Program",
+          flightDate: "1/1/1989",
+        },
+        {
+          programId: 5,
+          stationId: 3,
+          programName: "Frasier's",
+          flightDate: "11/11/1991",
+        },
+        {
+          programId: 6,
+          stationId: 4,
+          programName: "Barney",
+          flightDate: "9/3/1966",
+        },
+        {
+          programId: 7,
+          stationId: 1,
+          programName: "Just Shoot me",
+          flightDate: "6/6/1996",
+        },
+        {
+          programId: 8,
+          stationId: 4,
+          programName: "Wheel",
+          flightDate: "6/30/1975",
+        },
+        {
+          programId: 9,
+          stationId: 3,
+          programName: "Sesame Street",
+          flightDate: "5/16/1971",
+        },
+      ];
+
+      function getStation() {
+        let select = document.getElementById("progSelect");
+        let value = select.options[select.selectedIndex].value;
+        value === "select" ? " " : filterStation(value);
+      }
+
+      let filterStation = (station) => {
+        let selectedStation = PROGRAM.filter(function (program) {
+          return program.stationId == station;
+        });
+        sortByFlightDate(selectedStation);
+      };
+
+      let sortByFlightDate = (stationArray) => {
+        if (stationArray.length == 0) {
+          $(".output").text("No Programs for Station");
+          $("#program-form").addClass("d-none");
+        } else {
+          $(".output").empty();
+            stationArray.programName = new Date(stationArray.programName);
+          let sortedArray = stationArray.sort(function (a, b) {
+            if (new Date(b.flightDate) < new Date(a.flightDate)) {
+              return 1;
+            } else if (new Date(b.flightDate) > new Date(a.flightDate)) {
+              return -1;
+            } else if (a.programName < b.programName) {
+              return 1;
+            }
+            return 0;
+          });
+          sortedArray.map((program) => 
+          {
+            program.flightDate = new Date(program.flightDate).toDateString();
+            program.flightDate = program.flightDate.substring(4)})
+            mapToDom(sortedArray);
+        }
+      };
+
+      let mapToDom = (sortedStationArray) => {
+        var form = $("#program-form");
+        form.hasClass("d-none") ? form.toggleClass("d-none") : "";
+        form.find("#flightDate").val(sortedStationArray[0].flightDate);
+        form.find("#programName").val(sortedStationArray[0].programName);
+      };
+    </script>
+  </body>
+</html>
